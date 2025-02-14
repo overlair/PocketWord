@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5220E6152D5EC04C0016E435 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 5220E6142D5EC04C0016E435 /* Defaults */; };
+		5220E6182D5EC1780016E435 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 5220E6172D5EC1780016E435 /* GRDB */; };
+		5220E61B2D5EC19B0016E435 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5220E61A2D5EC19B0016E435 /* DifferenceKit */; };
+		5220E61E2D5EC20E0016E435 /* AsyncDisplayKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5220E61D2D5EC20E0016E435 /* AsyncDisplayKit */; };
+		524D76C72D5F630B004C7395 /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 524D76C62D5F630B004C7395 /* SwiftCSV */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		5220E5EC2D5EB8DA0016E435 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +73,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				524D76C72D5F630B004C7395 /* SwiftCSV in Frameworks */,
+				5220E61B2D5EC19B0016E435 /* DifferenceKit in Frameworks */,
+				5220E6152D5EC04C0016E435 /* Defaults in Frameworks */,
+				5220E6182D5EC1780016E435 /* GRDB in Frameworks */,
+				5220E61E2D5EC20E0016E435 /* AsyncDisplayKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +138,11 @@
 			);
 			name = PocketWord;
 			packageProductDependencies = (
+				5220E6142D5EC04C0016E435 /* Defaults */,
+				5220E6172D5EC1780016E435 /* GRDB */,
+				5220E61A2D5EC19B0016E435 /* DifferenceKit */,
+				5220E61D2D5EC20E0016E435 /* AsyncDisplayKit */,
+				524D76C62D5F630B004C7395 /* SwiftCSV */,
 			);
 			productName = PocketWord;
 			productReference = 5220E5D52D5EB8D60016E435 /* PocketWord.app */;
@@ -208,6 +226,13 @@
 			);
 			mainGroup = 5220E5CC2D5EB8D60016E435;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5220E6132D5EC04C0016E435 /* XCRemoteSwiftPackageReference "Defaults" */,
+				5220E6162D5EC1780016E435 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				5220E6192D5EC19B0016E435 /* XCRemoteSwiftPackageReference "DifferenceKit" */,
+				5220E61C2D5EC20E0016E435 /* XCRemoteSwiftPackageReference "Texture" */,
+				524D76C52D5F630B004C7395 /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5220E5D62D5EB8D60016E435 /* Products */;
 			projectDirPath = "";
@@ -294,9 +319,9 @@
 				INFOPLIST_FILE = PocketWord/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -322,9 +347,9 @@
 				INFOPLIST_FILE = PocketWord/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -569,6 +594,77 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5220E6132D5EC04C0016E435 /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Defaults";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.1;
+			};
+		};
+		5220E6162D5EC1780016E435 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		5220E6192D5EC19B0016E435 /* XCRemoteSwiftPackageReference "DifferenceKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ra1028/DifferenceKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+		5220E61C2D5EC20E0016E435 /* XCRemoteSwiftPackageReference "Texture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FluidGroup/Texture";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.2;
+			};
+		};
+		524D76C52D5F630B004C7395 /* XCRemoteSwiftPackageReference "SwiftCSV" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftcsv/SwiftCSV.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5220E6142D5EC04C0016E435 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5220E6132D5EC04C0016E435 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		5220E6172D5EC1780016E435 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5220E6162D5EC1780016E435 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+		5220E61A2D5EC19B0016E435 /* DifferenceKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5220E6192D5EC19B0016E435 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
+			productName = DifferenceKit;
+		};
+		5220E61D2D5EC20E0016E435 /* AsyncDisplayKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5220E61C2D5EC20E0016E435 /* XCRemoteSwiftPackageReference "Texture" */;
+			productName = AsyncDisplayKit;
+		};
+		524D76C62D5F630B004C7395 /* SwiftCSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 524D76C52D5F630B004C7395 /* XCRemoteSwiftPackageReference "SwiftCSV" */;
+			productName = SwiftCSV;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5220E5CD2D5EB8D60016E435 /* Project object */;
 }

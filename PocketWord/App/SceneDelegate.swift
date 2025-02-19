@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AsyncDisplayKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -18,11 +19,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        let controller = ContentViewController()
+        let size = window.frame.size
+        let controller = ASNavigationController(rootViewController: ContentViewController(size: size))
         window.rootViewController = controller
         window.makeKeyAndVisible()
         
-        self.window = window    }
+        self.window = window
+    }
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

@@ -8,18 +8,23 @@
 import AsyncDisplayKit
 
 class ChapterCellNode: ASCellNode , ASEditableTextNodeDelegate {
+    let book: Int
     let chapter: Int
-    init(chapter: Int, string: NSAttributedString? = nil) {
+    let width: CGFloat
+    
+    init(book: Int, chapter: Int, width: CGFloat, string: NSAttributedString? = nil) {
+        self.book = book
         self.chapter = chapter
+        self.width = width
+        
         super.init()
         self.automaticallyManagesSubnodes  = true
         self.automaticallyRelayoutOnSafeAreaChanges = true
         self.style.flexGrow = 1
         self.selectionStyle = .none
         self.backgroundColor = .clear
-        if let string {
-            store.textStorage.setAttributedString(string)
-        }
+       
+        
         
         let components = ASTextKitComponents(textStorage: store.textStorage,
                                              textContainerSize: .init(width: CGFloat.infinity,
@@ -30,6 +35,12 @@ class ChapterCellNode: ASCellNode , ASEditableTextNodeDelegate {
         store.text = ASEditableTextNode(textKitComponents: components,
                                              placeholderTextKitComponents: placeholder)
        
+        if let string {
+            store.textStorage.setAttributedString(string)
+            store.text.style.height = .init(unit: .points, value: string.height(withConstrainedWidth: width - 30))
+        }
+        
+
     }
     
     let store = Store()
@@ -63,13 +74,44 @@ class ChapterCellNode: ASCellNode , ASEditableTextNodeDelegate {
             if !isExpanded &&  store.text.selectedRange.length > 0 {
                 UIMenuController.shared.hideMenu()
                 store.text.resignFirstResponder()
+                
                 NotificationCenter.default
                     .post(name: .changeSelection,
-                            object: "")
+                            object: nil)
 
             }
             
-            layoutIfNeeded()
+//            layoutIfNeeded()
+        }
+    }
+    
+    
+    override var isHighlighted: Bool {
+        didSet {
+            print(isHighlighted)
+            if oldValue == false && isHighlighted {
+                highlightBackground()
+            } else if oldValue == true && !isHighlighted {
+                unHighlightBackground()
+            }
+        }
+    }
+
+    var highlightDuration: TimeInterval = 0.25
+
+    func highlightBackground() {
+        // Animate changes for highlighting
+        UIView.animate(withDuration: highlightDuration) { [store] in
+            store.indicator.alpha = 0.1
+            store.title.alpha = 0.1
+        }
+    }
+
+    func unHighlightBackground() {
+        // Animate changes for un-highlighting
+        UIView.animate(withDuration: highlightDuration) { [store] in
+            store.indicator.alpha = 1
+            store.title.alpha = 1
         }
     }
     
@@ -91,6 +133,7 @@ class ChapterCellNode: ASCellNode , ASEditableTextNodeDelegate {
                 UIMenuController.shared.showMenu(from: store.text.textView, rect: rect)
 
             } else {
+                
                 store.text.textView.selectedRange = .init()
                 UIMenuController.shared.hideMenu()
             }
@@ -144,13 +187,15 @@ class ChapterCellNode: ASCellNode , ASEditableTextNodeDelegate {
        
         
         
-        
+        store.text.style.flexGrow = 1
+//        store.text.style.flexShrink = 1
+
         store.text.layer.opacity = 0
         store.text.textView.isSelectable = true
         store.text.textView.isEditable = false
         store.text.textView.isScrollEnabled = false
         store.text.textView.addGestureRecognizer(tapGesture)
-        
+        store.text.textContainerInset = .init(top: 0, left: 15, bottom: 0, right: 15)
         store.text.delegate = self
 
         store.layoutManager.textContainerOriginOffset = .init(width: store.text.textContainerInset.left, height: store.text.textContainerInset.top)
@@ -160,7 +205,7 @@ class ChapterCellNode: ASCellNode , ASEditableTextNodeDelegate {
         let hStack = ASStackLayoutSpec.horizontal()
         hStack.justifyContent = .spaceBetween
         hStack.children = [store.title, store.indicator]
-        let hStackInset = ASInsetLayoutSpec(insets: .init(top: 0, left: 11, bottom: 0, right: 11), child: hStack)
+        let hStackInset = ASInsetLayoutSpec(insets: .init(top: 0, left: 25, bottom: 0, right: 25), child: hStack)
 
         let stack = ASStackLayoutSpec.vertical()
         stack.spacing = 11
@@ -169,7 +214,7 @@ class ChapterCellNode: ASCellNode , ASEditableTextNodeDelegate {
         } else {
             stack.children = [hStackInset]
         }
-        let inset = ASInsetLayoutSpec(insets: .init(top: 15, left: 15, bottom: 15, right: 15), child: stack)
+        let inset = ASInsetLayoutSpec(insets: .init(top: 15, left: 0, bottom: 15, right: 0), child: stack)
         return inset
     }
     
@@ -177,12 +222,11 @@ class ChapterCellNode: ASCellNode , ASEditableTextNodeDelegate {
                                             fromSelectedRange: NSRange,
                                             toSelectedRange: NSRange,
                                             dueToEditing: Bool) {
-        let string = editableTextNode.attributedText?.string ?? ""
-        let selected = (string as NSString).substring(with: toSelectedRange)
-        
+        let locator = RangeLocator(version: .kjv, book: book, chapter: chapter, range: toSelectedRange)
+       
         NotificationCenter.default
             .post(name: .changeSelection,
-                    object: selected)
+                  object: toSelectedRange.length > 0 ? locator : nil)
 
     }
 }

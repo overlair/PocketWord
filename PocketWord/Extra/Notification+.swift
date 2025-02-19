@@ -13,6 +13,12 @@ extension Notification.Name {
           return .init(rawValue: "UserNavigation.book") }
 static var changeChapter: Notification.Name {
           return .init(rawValue: "UserNavigation.chapter") }
+
+    static var displayChapters: Notification.Name {
+              return .init(rawValue: "UserNavigation.chaptersShown") }
+
 static var changeSelection: Notification.Name {
           return .init(rawValue: "UserInteraction.selection") }
+static var addNote: Notification.Name {
+          return .init(rawValue: "UserInteraction.addNote") }
 }

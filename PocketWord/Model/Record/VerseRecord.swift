@@ -13,7 +13,7 @@ import DifferenceKit
 // Data
 struct VerseRecord: Equatable, Codable, Hashable, Differentiable, FetchableRecord, MutablePersistableRecord {
     var id: Int
-    var version: Int
+    var version: BibleVersion
     var book: Int
     var chapter: Int
     var verse: Int

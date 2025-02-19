@@ -41,15 +41,27 @@ class  VerseTapGestureRecognizer: UITapGestureRecognizer {
         let touch = touch.location(in: textView)
         let point = CGPoint(x: touch.x - textView.textContainerInset.left,
                             y: touch.y - textView.textContainerInset.top)
-        let position = textView.closestPosition(to: point) ?? textView.beginningOfDocument
-        let offset = textView.offset(from: textView.beginningOfDocument, to: position)
+        let position = textView.closestPosition(to: point) ?? textView.endOfDocument
+        var offset = textView.offset(from: textView.beginningOfDocument, to: position)
         let length = textView.offset(from: textView.beginningOfDocument, to: textView.endOfDocument)
+        // clamp offset so we avoid overrun
+        offset = min(offset, length - 1)
+        print(offset, length)
         let verse = textView.textStorage.attribute(.verse, at: offset, effectiveRange: nil) as? Int
         let range = NSRange(location: 0, length: length)
         var foundVerse = TappedVerse?.none
         textView.textStorage.enumerateAttribute(.verse, in: range) {  value, range, shouldContinue in
             if let v = value as? Int, v == verse {
-                foundVerse = TappedVerse(range, v)
+                let substring = textView.textStorage.attributedSubstring(from: range).string as NSString
+                let newlineRange = substring.rangeOfCharacter(from: .newlines, options: .backwards)
+                print(range, newlineRange)
+                var newRange = range
+                if newlineRange.length > 0 {
+                    let length = newlineRange.location
+                    newRange = NSRange(location: range.location, length: length)
+                }
+                
+                foundVerse = TappedVerse(newRange, v)
                 shouldContinue.pointee = false
             }
         }

@@ -9,7 +9,7 @@ import Foundation
 import SwiftCSV
 
 
-func readCSV() {
+func readCSV(version: BibleVersion = .kjv) {
     
     /*
         ignore the first row
@@ -32,20 +32,26 @@ func readCSV() {
                 let name = dict["Book"] ?? ""
                 let chapter = Int(dict["Chapter"] ?? "1") ?? 1
                 let verse = Int(dict["Verse"] ?? "1") ?? 1
-                let text = dict["Text"] ?? ""
+                let rawText = dict["Text"] ?? ""
+                let isParagraphEnd = rawText.contains("¶")
+                var text = rawText
+                    .replacingOccurrences(of: "¶", with: "")
+                    .trailingSpacesTrimmed
+                    .drop(while: { c in c.isWhitespace })
 
-                let version = 0
-
+                if isParagraphEnd {
+                    text = text + "\n"
+                }
                 if currentBook != name {
                     bookCounter += 1
 
                     currentBook = name
-                    let id = (version * 1000) + bookCounter
-                    books.append(BookRecord(id: id, version: version, name: name))
+                    let id = (version.rawValue * 1000) + bookCounter
+                    books.append(BookRecord(id: id, version: .kjv, name: name))
                 }
                 
-                let id = version * 1000000000 + bookCounter * 1000000 + chapter * 1000 + verse
-                let record = VerseRecord(id: id, version: version, book: bookCounter, chapter: chapter, verse: verse , text: text)
+                let id = version.rawValue * 1000000000 + bookCounter * 1000000 + chapter * 1000 + verse
+                let record = VerseRecord(id: id, version: version, book: bookCounter, chapter: chapter, verse: verse , text: String(text))
                 verses.append(record)
             }
             
@@ -120,4 +126,16 @@ func readCSV() {
 //    }
 
     
+}
+
+extension String {
+    var trailingSpacesTrimmed: String {
+        var newString = self
+
+        while newString.last == " " {
+            newString = String(newString.dropLast())
+        }
+
+        return newString
+    }
 }

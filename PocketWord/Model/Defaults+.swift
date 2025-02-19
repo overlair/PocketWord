@@ -10,10 +10,13 @@ import Defaults
 
 
 extension Defaults.Keys {
-    static let version = Defaults.Key<String>("version", default: "KJV")
+    static let version = Defaults.Key<BibleVersion>("version", default: .kjv)
     static let book = Defaults.Key<Int>("book", default: 1)
     static let chapter = Defaults.Key<Int>("chapter", default: 1)
-    static let bookmark = Defaults.Key<BookmarkLocator?>("bookmark", default: nil)
+    
+    
+    static let highlight = Defaults.Key<HighlightColor>("highlight", default: .yellow)
+    static let bookmark = Defaults.Key<RangeLocator?>("bookmark", default: nil)
     
     static let textSize = Defaults.Key<CGFloat>("textSize", default: 1)
     static let lineSpacing = Defaults.Key<CGFloat>("lineSpacing", default: 1)
@@ -21,10 +24,3 @@ extension Defaults.Keys {
 
 }
 
-struct BookmarkLocator: Hashable, Codable, Defaults.Serializable {
-//    let version: Int
-    let book: Int
-    let chapter: Int
-    let range: NSRange
-    
-}

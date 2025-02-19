@@ -10,8 +10,10 @@ import AsyncDisplayKit
 
 class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
     let book: Int
-    init(book: Int) {
+    let width: CGFloat
+    init(book: Int, width: CGFloat) {
         self.book = book
+        self.width = width
         super.init()
         self.automaticallyManagesSubnodes  = true
         self.automaticallyRelayoutOnSafeAreaChanges = true
@@ -41,7 +43,7 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
     }
     
     let HEADER_FONT_SIZE = CGFloat(21)
-    let BATCH_SIZE = 10
+    let BATCH_SIZE = 4
     var keepFetchingBatches: Bool = true
     
     @objc func onBookOutside() {
@@ -87,9 +89,11 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
 //        store.chapters.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
 //        store.chapters.clipsToBounds = true
         
+//        store.chapters.view.separatorStyle = .none
         store.chapters.view.separatorStyle = .singleLine
-        store.chapters.view.separatorColor = .systemGray5
+        store.chapters.view.separatorColor = .systemGray6
         store.chapters.view.separatorInset = .init(top: 0, left: 30, bottom: 0, right: 0)
+        store.chapters.contentInset = .init(top: 24, left: 0, bottom: 100, right: 0)
 //        store.title.style.flexGrow = 1
 
         
@@ -162,6 +166,32 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
                 store.numChapters = chapters
             }
             
+            let range = Array(0..<BATCH_SIZE)
+
+            let strings: [(Int, Int, NSAttributedString)] = range.compactMap {
+                
+                guard let chapter = buildChapter(book, $0 + 1) else {
+                    return nil
+                }
+                
+                return ($0, $0 + 1, chapter)
+                
+            }
+            if store.numChapters > 0 {
+                keepFetchingBatches = store.chapterText.keys.count + strings.count < store.numChapters
+            }
+            let paths = strings.map { IndexPath(row: $0.0, section: 0)}
+    //        store.semaphore.signal()
+
+//            DispatchQueue.main.async { [store] in
+                for (index, chapter, string) in strings {
+                    store.chapterText[chapter] = string
+                }
+                store.chapters.insertRows(at: paths, with: .left)
+    //            store.semaphore.signal()
+                self.updateVisibleChapters()
+//            }
+            
         } catch {
             
         }
@@ -185,7 +215,14 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
         let contentInset = ASInsetLayoutSpec(insets: .init(top: headerHeight, left: 0, bottom: 0, right: 0),  child: store.chapters)
         let content = ASOverlayLayoutSpec(child: contentInset, overlay: headerRelative)
 
-        return ASInsetLayoutSpec(insets: .zero, child: content)
+        let dividerInset = ASInsetLayoutSpec(insets: .init(top: 0, left: 15, bottom: 0, right: 15), child: store.divider)
+
+        let stack = ASStackLayoutSpec.vertical()
+        stack.children = [dividerInset, store.chapters]
+        var insets = safeAreaInsets
+        insets.bottom = 0
+//        return ASInsetLayoutSpec(insets: .zero, child: content)
+        return ASInsetLayoutSpec(insets: insets, child: stack)
 
     }
     
@@ -196,33 +233,34 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
     
     override func didEnterPreloadState() {
         super.didEnterPreloadState()
-//        store.semaphore.wait()
         guard store.chapterText.isEmpty else { return }
+//        store.semaphore.wait()
 
-        let range = Array(0..<BATCH_SIZE)
-
-        let strings: [(Int, Int, NSAttributedString)] = range.compactMap {
-            
-            guard let chapter = buildChapter(book, $0 + 1) else {
-                return nil
-            }
-            
-            return ($0, $0 + 1, chapter)
-            
-        }
-                
-        let paths = strings.map { IndexPath(row: $0.0, section: 0)}
-//        store.semaphore.signal()
-
-        DispatchQueue.main.async { [store] in
-            print(strings)
-            for (index, chapter, string) in strings {
-                store.chapterText[chapter] = string
-            }
-            store.chapters.insertRows(at: paths, with: .left)
-//            store.semaphore.signal()
-            self.updateVisibleChapters()
-        }
+//        let range = Array(0..<BATCH_SIZE)
+//
+//        let strings: [(Int, Int, NSAttributedString)] = range.compactMap {
+//            
+//            guard let chapter = buildChapter(book, $0 + 1) else {
+//                return nil
+//            }
+//            
+//            return ($0, $0 + 1, chapter)
+//            
+//        }
+//        if store.numChapters > 0 {
+//            keepFetchingBatches = store.chapterText.keys.count + strings.count < store.numChapters
+//        }
+//        let paths = strings.map { IndexPath(row: $0.0, section: 0)}
+////        store.semaphore.signal()
+//
+//        DispatchQueue.main.async { [store] in
+//            for (index, chapter, string) in strings {
+//                store.chapterText[chapter] = string
+//            }
+//            store.chapters.insertRows(at: paths, with: .left)
+////            store.semaphore.signal()
+//            self.updateVisibleChapters()
+//        }
     }
     
     func shouldBatchFetch(for tableNode: ASTableNode) -> Bool {
@@ -234,11 +272,8 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
 //        store.semaphore.wait()
 
         let offset = store.chapterText.count
-//        let version = Defaults[.version]
-        let range = Array(offset...offset + BATCH_SIZE)
+        let range = Array(offset..<offset + BATCH_SIZE)
 
-        print("OFFSET", offset)
-        print("RANGE", range)
 
         let strings: [(Int, Int, NSAttributedString)] = range.compactMap {
             
@@ -251,7 +286,7 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
         }
         
         keepFetchingBatches = store.chapterText.keys.count + strings.count < store.numChapters
-        
+
         let paths = strings.map { IndexPath(row: $0.0, section: 0)}
 
 //        store.semaphore.signal()
@@ -263,12 +298,9 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
             store.chapters.insertRows(at: paths, with: .left)
            
            
-            if offset == 0 {
-                self.updateVisibleChapters()
-
-            }
-
+//            store.semaphore.signal()
             context.completeBatchFetching(true)
+            
         }
         
     }
@@ -282,9 +314,11 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
+        let width = width
+        let book = book
         let chapter = indexPath.row + 1
         let text = store.chapterText[chapter]
-        return { ChapterCellNode(chapter: chapter, string: text) }
+        return { ChapterCellNode(book: book, chapter: chapter, width: width, string: text) }
     }
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
@@ -338,18 +372,24 @@ class BookCellNode: ASCellNode, ASTableDelegate, ASTableDataSource {
     }
     
     func updateVisibleChapters() {
-        let chapters = store.chapters.visibleNodes.compactMap { $0.indexPath }.map { $0.row }.sorted()
-        var visible = ""
-        if let start = chapters.first {
-            visible += String(start + 1)
-        }
-        if let end = chapters.last, end != chapters.first {
-            visible += "-"
-            visible += String(end + 1)
-        }
+//        let chapters = store.chapters.visibleNodes.compactMap { $0.indexPath }.map { $0.row }.sorted()
+//        var visible = ""
+//        if let start = chapters.first {
+//            visible += String(start + 1)
+//        }
+//        if let end = chapters.last, end != chapters.first {
+//            visible += "-"
+//            visible += String(end + 1)
+//        }
         
-        store.visibleChapters.attributedText = .init(string: visible, attributes: [.font: Constant.labelFont(size: 21),
-                                                                                   .foregroundColor: UIColor.quaternaryLabel])
+        print(book)
+        NotificationCenter.default
+            .post(name: .displayChapters,
+                    object: nil)
+        
+        
+//        store.visibleChapters.attributedText = .init(string: visible, attributes: [.font: Constant.labelFont(size: 21),
+//                                                                                   .foregroundColor: UIColor.quaternaryLabel])
 
     }
 }

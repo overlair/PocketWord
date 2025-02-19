@@ -34,3 +34,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+
+/*
+ 1. get navigation down pat
+ 2. improve search (allow
+ 1. get highlighting, bookmarking
+ 
+ 
+ static
+    Translations
+ 
+ default
+    Bookmark
+ 
+ db
+    Verses
+    Books
+    Highlight 
+    Note
+ 
+ 
+ 
+ 
+ 
+ 
+ */

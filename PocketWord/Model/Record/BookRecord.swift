@@ -11,7 +11,7 @@ import DifferenceKit
 
 struct BookRecord: Equatable, Codable, Hashable, Differentiable, FetchableRecord, MutablePersistableRecord {
     var id: Int
-    var version: Int
+    var version: BibleVersion
     var name: String
 
     enum Columns {

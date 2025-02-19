@@ -44,6 +44,9 @@ public struct AppDatabase {
                 try BookRecord.createTable(db)
                 try VerseRecord.createTable(db)
                 try VerseRecord.createFTSTable(db)
+                try HighlightRecord.createTable(db)
+                try NoteRecord.createTable(db)
+                try NoteRecord.createFTSTable(db)
             }
             
             let dbPool = try DatabasePool(
